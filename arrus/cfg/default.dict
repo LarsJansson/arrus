@@ -386,9 +386,25 @@ probe_models: [
             end: 10e6
         },
         voltage_range: {
-	    begin: 0,
-	    end: 75
-	}
+	        begin: 0,
+	        end: 75
+	    }
+	},
+	{
+        id: {
+            manufacturer: "olympus"
+            name: "10l32"
+        }
+        n_elements: 32,
+        pitch: 0.31e-3,
+        tx_frequency_range: {
+            begin: 1e6,
+            end: 10e6
+        },
+        voltage_range: {
+	        begin: 0,
+	        end: 50
+	    }
     }
 ]
 
@@ -483,6 +499,22 @@ probe_to_adapter_connections: [
         channel_mapping_ranges: {
             begin: 0
             end: 191
+        }
+    },
+    {
+        probe_model_id: {
+            manufacturer: "olympus"
+            name: "10l32"
+        }
+        probe_adapter_model_id: [
+	        {
+                manufacturer: "us4us"
+                name: "esaote3"
+            }
+        ]
+        channel_mapping_ranges: {
+            begin: 0
+            end: 32
         }
     },
     {

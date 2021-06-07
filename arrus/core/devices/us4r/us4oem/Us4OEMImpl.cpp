@@ -399,7 +399,11 @@ Us4OEMImpl::setTxRxSequence(const std::vector<TxRxParameters> &seq,
                     pri += lastPriExtend.value();
                 }
                 auto priMs = static_cast<unsigned int>(pri * 1e6);
-                ius4oem->SetTrigger(priMs, checkpoint, firing);
+                bool externalTrigger = false;
+                if(checkpoint) {
+                 externalTrigger = true;
+                }
+                ius4oem->SetTrigger(priMs, checkpoint, firing, externalTrigger);
             }
         }
     }
