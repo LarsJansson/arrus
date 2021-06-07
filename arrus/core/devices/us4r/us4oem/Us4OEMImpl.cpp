@@ -398,12 +398,12 @@ Us4OEMImpl::setTxRxSequence(const std::vector<TxRxParameters> &seq,
                 if(opIdx == nOps - 1 && lastPriExtend.has_value()) {
                     pri += lastPriExtend.value();
                 }
-                auto priMs = static_cast<unsigned int>(pri * 1e6);
+                auto priMs = static_cast<unsigned int>(std::round(pri * 1e6));
                 bool externalTrigger = false;
                 if(checkpoint) {
-                 externalTrigger = true;
+                    externalTrigger = true;
                 }
-                ius4oem->SetTrigger(priMs, checkpoint, firing, externalTrigger);
+                ius4oem->SetTrigger(priMs, checkpoint, firing);
             }
         }
     }
