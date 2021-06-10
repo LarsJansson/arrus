@@ -18,7 +18,8 @@ class Us4OEMFactory {
 public:
     virtual Us4OEMImplBase::Handle
     getUs4OEM(Ordinal ordinal, IUs4OEMHandle &handle,
-              const Us4OEMSettings &settings) = 0;
+              const Us4OEMSettings &settings,
+              bool externalTrigger) = 0;
 };
 
 }

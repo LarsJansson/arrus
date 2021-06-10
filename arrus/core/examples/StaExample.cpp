@@ -8,6 +8,73 @@
 
 #include "arrus/core/api/arrus.h"
 
+/**
+ * A simple custom logger which just prints a given message to stderr.
+ */
+class MyCustomLogger : public ::arrus::Logger {
+public:
+    explicit MyCustomLogger(arrus::LogSeverity loggingLevel)
+            : loggingLevel(loggingLevel) {}
+
+    /**
+     * Prints a message with given severity to stderr.
+     * If the selected severity is, nothing is printed on console.
+     *
+     * @param severity message severity
+     * @param msg message to print
+     */
+    void
+    log(const arrus::LogSeverity severity, const std::string &msg) override {
+        if(severity >= loggingLevel) {
+            std::cerr << "[" << severityToString(severity) << "]: " << msg << std::endl;
+        }
+    }
+
+    void
+    setAttribute(const std::string &key, const std::string &value) override
+    {}
+private:
+
+    std::string severityToString(const arrus::LogSeverity severity) {
+        switch(severity) {
+            case arrus::LogSeverity::TRACE: return "trace";
+            case arrus::LogSeverity::DEBUG: return "debug";
+            case arrus::LogSeverity::INFO: return "info";
+            case arrus::LogSeverity::WARNING: return "warning";
+            case arrus::LogSeverity::ERROR: return "error";
+            case arrus::LogSeverity::FATAL: return "fatal";
+            default: return "unknown";
+        }
+    }
+
+    arrus::LogSeverity loggingLevel;
+};
+
+/**
+ * A custom LoggerFactory.
+ * The instance of this class is by ARRUS to create arrus::Logger instances.
+ */
+class MyCustomLoggerFactory: public ::arrus::LoggerFactory {
+public:
+    explicit MyCustomLoggerFactory(arrus::LogSeverity severityLevel)
+            : severityLevel(severityLevel) {}
+
+    /**
+     * Returns a new Logger instance.
+     */
+    arrus::Logger::Handle getLogger() override {
+        return std::make_unique<MyCustomLogger>(severityLevel);
+    }
+
+    arrus::Logger::Handle getLogger(
+            const std::vector<arrus::Logger::Attribute> &attributes) override {
+        return getLogger();
+    }
+private:
+    ::arrus::LogSeverity severityLevel;
+};
+
+
 int main() noexcept {
     using namespace ::arrus::session;
     using namespace ::arrus::devices;
@@ -16,7 +83,9 @@ int main() noexcept {
     try {
         // TODO set path to us4r-lite configuration file
         // TODO set appropriate aperture size
-        auto settings = ::arrus::io::readSessionSettings("/path/to/set");
+
+        ::arrus::setLoggerFactory(std::make_shared<MyCustomLoggerFactory>(::arrus::LogSeverity::TRACE));
+        auto settings = ::arrus::io::readSessionSettings("C:/Users/Public/us4r.prototxt");
         auto session = ::arrus::session::createSession(settings);
         auto us4r = (::arrus::devices::Us4R *) session->getDevice("/Us4R:0");
         auto probe = us4r->getProbe(0);
@@ -24,7 +93,8 @@ int main() noexcept {
         unsigned nElements = probe->getModel().getNumberOfElements().product();
         std::cout << "Probe with " << nElements << " elements." << std::endl;
 
-		constexpr int APERTURE_SIZE = 128;
+		constexpr int APERTURE_SIZE = 3;
+
 		// Rx aperture origin = 0, size = 128.
         std::vector<bool> rxAperture(nElements, false);
 		for(int i = 0; i < APERTURE_SIZE; ++i) {

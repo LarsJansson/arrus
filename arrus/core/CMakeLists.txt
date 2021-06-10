@@ -316,6 +316,6 @@ install(
 ################################################################################
 # Examples
 ################################################################################
-add_executable(pwi-example examples/PwiExample.cpp)
-target_link_libraries(pwi-example PRIVATE arrus-core)
-target_include_directories(pwi-example PRIVATE ${ARRUS_ROOT_DIR})
+add_executable(sta-example examples/StaExample.cpp)
+target_link_libraries(sta-example PRIVATE arrus-core)
+target_include_directories(sta-example PRIVATE ${ARRUS_ROOT_DIR})

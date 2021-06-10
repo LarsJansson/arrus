@@ -21,12 +21,14 @@ Us4OEMImpl::Us4OEMImpl(DeviceId id, IUs4OEMHandle ius4oem,
                        const BitMask &activeChannelGroups,
                        std::vector<uint8_t> channelMapping,
                        uint16 pgaGain, uint16 lnaGain,
-                       std::unordered_set<uint8_t> channelsMask)
+                       std::unordered_set<uint8_t> channelsMask,
+                       bool externalTrigger = false)
     : Us4OEMImplBase(id), logger{getLoggerFactory()->getLogger()},
       ius4oem(std::move(ius4oem)),
       channelMapping(std::move(channelMapping)),
       channelsMask(std::move(channelsMask)),
-      pgaGain(pgaGain), lnaGain(lnaGain) {
+      pgaGain(pgaGain), lnaGain(lnaGain),
+      externalTrigger(externalTrigger) {
 
     INIT_ARRUS_DEVICE_LOGGER(logger, id.toString());
 
@@ -399,11 +401,7 @@ Us4OEMImpl::setTxRxSequence(const std::vector<TxRxParameters> &seq,
                     pri += lastPriExtend.value();
                 }
                 auto priMs = static_cast<unsigned int>(std::round(pri * 1e6));
-                bool externalTrigger = false;
-                if(checkpoint) {
-                    externalTrigger = true;
-                }
-                ius4oem->SetTrigger(priMs, checkpoint, firing);
+                ius4oem->SetTrigger(priMs, checkpoint, firing, checkpoint && externalTrigger);
             }
         }
     }
@@ -607,7 +605,9 @@ void Us4OEMImpl::stop() {
 }
 
 void Us4OEMImpl::syncTrigger() {
-    this->ius4oem->TriggerSync();
+    if(!externalTrigger) {
+        this->ius4oem->TriggerSync();
+    }
 }
 
 void Us4OEMImpl::setTgcCurve(const ops::us4r::TGCCurve &tgc) {

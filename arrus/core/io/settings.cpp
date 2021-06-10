@@ -391,7 +391,8 @@ Us4RSettings readUs4RSettings(const proto::Us4RSettings &us4r,
         }
 
         return Us4RSettings(adapterSettings, probeSettings, rxSettings,
-                            hvSettings, channelsMask, us4oemChannelsMask);
+                            hvSettings, channelsMask, us4oemChannelsMask,
+                            us4r.external_trigger());
     }
 }
 

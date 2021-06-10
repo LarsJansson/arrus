@@ -16,7 +16,8 @@ public:
 
     Us4OEMImplBase::Handle
     getUs4OEM(Ordinal ordinal, IUs4OEMHandle &ius4oem,
-              const Us4OEMSettings &cfg) override {
+              const Us4OEMSettings &cfg,
+              bool externalTrigger) override {
 
         // Validate settings.
         Us4OEMSettingsValidator validator(ordinal);
@@ -128,7 +129,8 @@ public:
             DeviceId(DeviceType::Us4OEM, ordinal),
             std::move(ius4oem), cfg.getActiveChannelGroups(),
             channelMapping, pgaGain, lnaGain,
-            cfg.getChannelsMask());
+            cfg.getChannelsMask(),
+            externalTrigger);
     }
 
 private:

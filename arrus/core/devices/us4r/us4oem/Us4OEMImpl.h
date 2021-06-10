@@ -86,7 +86,8 @@ public:
                const BitMask &activeChannelGroups,
                std::vector<uint8_t> channelMapping,
                uint16 pgaGain, uint16 lnaGain,
-               std::unordered_set<uint8_t> channelsMask);
+               std::unordered_set<uint8_t> channelsMask,
+               bool externalTrigger);
 
     ~Us4OEMImpl() override;
 
@@ -132,6 +133,7 @@ public:
     std::vector<uint8_t> channelMapping;
     std::unordered_set<uint8_t> channelsMask;
     uint16 pgaGain, lnaGain;
+    bool externalTrigger;
 
     std::tuple<
         std::unordered_map<uint16, uint16>,
